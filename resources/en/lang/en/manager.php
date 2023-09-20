@@ -123,6 +123,7 @@ return [
     "cash_on_delivery"=>"Cash on delivery",
     "razorpay"=>"Razorpay",
     "order_cancelled_by_shop"=>"Order cancelled by shop",
+    "order_cancelled_by_delivery"=>"Order cancelled by delivery",
     "order_cancelled_by_user"=>"Order cancelled by user",
     "shop_revenues"=>"Shop Revenues",
     "total_products"=>"Total Products",

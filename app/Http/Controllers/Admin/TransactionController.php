@@ -24,10 +24,13 @@ class TransactionController extends Controller
 
         $shops = Shop::all();
 
+
         $deliveryBoys = DeliveryBoy::where('shop_id',Null)->get();
 
 
         $transactions =  Transaction::paginate(10);
+
+
 
         return view('admin.transaction.transactions')->with([
             'transactions' => $transactions,
@@ -126,7 +129,7 @@ class TransactionController extends Controller
 
     static function addTransaction($orderId): bool
     {
-
+    
         $order = Order::find($orderId);
         $orderPayment = OrderPayment::find($order->order_payment_id);
 
@@ -165,24 +168,24 @@ class TransactionController extends Controller
         $transaction->delivery_boy_id = $order->delivery_boy_id;
         return $transaction->save();
     }
-
-
+    
+    
     public function store_add($shop_id, Request $req){
-
+          
         //   $last_date = Transaction::where('status','paid');
         //     if($req->type == 'deliveryBoy'){
         //           $last_date->where('delivery_boy_id',$shop_id)->orderByDesc('id');
         //       }else{
         //         $last_date->where('shop_id',$shop_id)->orderByDesc('id');
         //     }
-
+            
         //     $last_date = $last_date->first();
         //     if($last_date){
         //         $req->validate([
         //       'from_date' => "required|after:$last_date->to_date"],[
         //           'from_date.after' => 'Shop Paid previous orders']);
         //     }
-
+        
            $req->validate([
                'from_date' => "required",
                'to_date' => 'required|after:from_date',
@@ -207,8 +210,8 @@ class TransactionController extends Controller
               $transactions->status = $req->status;
               $transactions->total = $req->total;
               $transactions->save();
-
-            // shop transaction
+              
+            // shop transaction 
             $orders = Order::whereIn('status',[5,6])->where('is_paid',0);
                if($req->type == 'shop'){
                     $orders->where('shop_id',$shop_id);
@@ -227,12 +230,12 @@ class TransactionController extends Controller
 
              }
    }
-
+    
 
     public function add($shop_id){
         $type ='shop';
         $item = Shop::findOrFail($shop_id);
-        // shop transaction
+        // shop transaction 
         $transactions = Transaction::where('shop_id',$shop_id)->get();
 
        return view('admin.transaction.add-transaction')->with([
@@ -240,13 +243,13 @@ class TransactionController extends Controller
             'transactions' => $transactions,
             'type' =>$type,
         ]);
-
+        
     }
-
+    
       public function add_delivery_transaction($boy_id){
         $type ='deliveryBoy';
         $item = DeliveryBoy::findOrFail($boy_id);
-        // shop transaction
+        // shop transaction 
         $transactions = Transaction::where('delivery_boy_id',$boy_id)->get();
 
        return view('admin.transaction.add-transaction')->with([
@@ -255,7 +258,7 @@ class TransactionController extends Controller
             'type' =>$type,
         ]);
     }
-
+    
     public function get_total($id, Request $req){
        $orders = Order::whereIn('status',[5,6]);
        if($req->type == 'shop'){
@@ -263,11 +266,11 @@ class TransactionController extends Controller
        }else{
             $orders->where('shop_id',Null)->where('delivery_boy_id',$id);
        }
-
+       
        $end_date=strtotime($req->to_date) + (24 * 60 * 60);
        $total = $orders->whereBetween('created_at', [date('Y-m-d', strtotime($req->from_date)) , date('Y-m-d',$end_date)])->sum('admin_revenue');
        return $total;
     }
-
-
+    
+  
 }

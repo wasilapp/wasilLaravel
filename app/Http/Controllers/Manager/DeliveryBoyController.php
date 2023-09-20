@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Manager;
 
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Category;
-use App\Models\DeliveryBoy;
-use Illuminate\Http\Request;
 use App\Helpers\DistanceUtil;
-use App\Models\AssignToDelivery;
-use App\Models\DeliveryBoyReview;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\FCMController;
+use App\Models\DeliveryBoy;
+use App\Models\DeliveryBoyReview;
+use App\Models\Order;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Support\Facades\Hash;
+use App\Models\AssignToDelivery;
 
 class DeliveryBoyController extends Controller
 {
@@ -41,10 +41,10 @@ class DeliveryBoyController extends Controller
     public function create()
     {
         $categories = Category::where('active',1)->get();
-
+        
         return view('manager.delivery-boys.create-delivery-boys',compact('categories'));
     }
-
+    
 
     public function store(Request $request)
     {
@@ -60,7 +60,7 @@ class DeliveryBoyController extends Controller
                 'car_number' => 'required'
             ]
             //email //
-            //shop_id
+            //shop_id 
         );
 
         // if ($validator->fails()) {
@@ -81,7 +81,7 @@ class DeliveryBoyController extends Controller
         $avatar_url= $request->file('profile_pic')->store('driver_avatars', 'public');
         $deliveryBoy->driving_license = $path;
 
-
+        
         if($request->email){
             $this->validate($request,[
                 'email' => 'required|email|unique:delivery_boys',
@@ -89,8 +89,8 @@ class DeliveryBoyController extends Controller
             $deliveryBoy->email = $request->get('email');
         }
              $deliveryBoy->shop_id = auth()->user()->shop->id;
-
-
+        
+       
         $deliveryBoy->avatar_url = $avatar_url;
         $deliveryBoy->mobile_verified = 1;
         if($deliveryBoy->save()){
@@ -130,9 +130,7 @@ class DeliveryBoyController extends Controller
     public function showForAssign($order_id)
     {
         $shop = auth()->user()->shop;
-
         $order = Order::find($order_id);
-
         if ($order) {
             if ($order->delivery_boy_id) {
                 return view('manager.error-page')->with([
@@ -142,20 +140,20 @@ class DeliveryBoyController extends Controller
                     'redirect_text' => 'Go to Order',
                     'redirect_url' => route('manager.orders.edit', ['id' => $order_id])
                 ]);
-
             } else {
                 $delivery_boys = DeliveryBoy::where('shop_id',$shop->id)
+                // ->where('is_free', '=', true)
                     ->where('is_offline', false)->get();
-                // dd($delivery_boys);
+
+                //return $shop->latitude;
                 foreach ($delivery_boys as $delivery_boy){
                    $delivery_boy['far_from_shop']=DistanceUtil::distanceBetweenTwoLatLng($shop->latitude,$shop->longitude,$delivery_boy->latitude,$delivery_boy->longitude,);
                 }
-                // dd('rahaf1');
+
                 return view('manager.delivery-boys.assign')->with([
                     'order_id' => $order_id,
                     'delivery_boys' => $delivery_boys
                 ]);
-
             }
         } else {
             return view('manager.error-page')->with([
@@ -165,13 +163,14 @@ class DeliveryBoyController extends Controller
                 'redirect_text' => 'Go to Order',
                 'redirect_url' => route('manager.orders.index')
             ]);
-
         }
 
     }
 
     public function assign($order_id, $delivery_boy_id)
     {
+
+
         $order = Order::findorfail($order_id);
         if ($order) {
             if ($order->delivery_boy_id) {
@@ -183,20 +182,19 @@ class DeliveryBoyController extends Controller
                     'redirect_url' => route('manager.orders.edit', ['id' => $order_id])
                 ]);
             } else {
-                //dd();
                 $order->delivery_boy_id = $delivery_boy_id;
-                $deliveryBoy = DeliveryBoy::findorfail($delivery_boy_id);
+                $deliveryBoy = DeliveryBoy::find($delivery_boy_id);
                 $deliveryBoy->is_free = false;
                 $order->status = 1;
                 $order->save();
                 $deliveryBoy->save();
                 $user = User::findorfail($order->user_id);
-
+                
                 AssignToDelivery::create([
                     'delivery_boy_id' => $delivery_boy_id,
                     'order_id'=>$order->id
                 ]);
-
+                
                 FCMController::sendMessage("Changed Order Status","Your order ready and wait for delivery boy",$user->fcm_token);
                 FCMController::sendMessage('New Order','Body for notification',$deliveryBoy->fcm_token);
                 return redirect(route('manager.orders.edit', ['id' => $order_id]))->with([

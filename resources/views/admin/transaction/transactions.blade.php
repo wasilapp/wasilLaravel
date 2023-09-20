@@ -29,7 +29,7 @@
         </div>
 
 
-
+  
         <div class="card">
             <div class="card-body">
                 @if($shops->count()>0)
@@ -62,7 +62,7 @@
                                                  {{\App\Helpers\CurrencyUtil::doubleToString($shop->orders->whereIn('status',[5,6])->sum('admin_revenue'))}} {{\App\Helpers\AppSetting::$currencySign}}
                                             </td>
                                             <td>
-                                                 {{\App\Helpers\CurrencyUtil::doubleToString(\App\Models\Shop::total_shop_to_admin($shop->id))}}   {{\App\Helpers\AppSetting::$currencySign}}
+                                                 {{\App\Helpers\CurrencyUtil::doubleToString(\App\Models\Shop::total_shop_to_admin($shop->id))}}   {{\App\Helpers\AppSetting::$currencySign}} 
                                             </td>
                                            <td>{{\App\Helpers\CurrencyUtil::doubleToString(($shop->orders->whereIn('status',[5,6])->sum('admin_revenue'))- (\App\Models\Shop::total_shop_to_admin($shop->id)))}} {{\App\Helpers\AppSetting::$currencySign}} </td>
                                             <td>
@@ -117,7 +117,7 @@
                                                  {{\App\Helpers\CurrencyUtil::doubleToString($deliveryBoy->orders->whereIn('status',[5,6])->sum('admin_revenue'))}} {{\App\Helpers\AppSetting::$currencySign}}
                                             </td>
                                             <td>
-                                                 {{\App\Helpers\CurrencyUtil::doubleToString(\App\Models\DeliveryBoy::total_shop_to_admin($deliveryBoy->id))}}   {{\App\Helpers\AppSetting::$currencySign}}
+                                                 {{\App\Helpers\CurrencyUtil::doubleToString(\App\Models\DeliveryBoy::total_shop_to_admin($deliveryBoy->id))}}   {{\App\Helpers\AppSetting::$currencySign}} 
                                             </td>
                                             <td>{{\App\Helpers\CurrencyUtil::doubleToString(($deliveryBoy->orders->whereIn('status',[5,6])->sum('admin_revenue')) - (\App\Models\DeliveryBoy::total_shop_to_admin($deliveryBoy->id)))}} {{\App\Helpers\AppSetting::$currencySign}} </td>
                                             <td>

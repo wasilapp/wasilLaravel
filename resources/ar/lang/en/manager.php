@@ -123,6 +123,7 @@ return [
     "cash_on_delivery"=>"الدفع عند الاستلام",
     "razorpay"=>"Razorpay",
     "order_cancelled_by_shop"=>"الطلب الغي بواسطة المتجر",
+    "order_cancelled_by_delivery"=>"الطلب الغي بواسطة الديلفري",
     "order_cancelled_by_user"=>"الطلب الغي بواسطة العميل",
     "shop_revenues"=>"تقييمات المتجر",
     "total_products"=>"مجموع المنتجات",

@@ -35,7 +35,7 @@ class ShopController extends Controller
 
     public function edit($id)
     {
-        
+
     }
 
 

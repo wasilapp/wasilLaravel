@@ -24,8 +24,8 @@ class AuthController extends Controller
                 'mobile' => 'required|unique:delivery_boys',
                 'password' => 'required',
                 'category_id' => 'required',
-                'driving_license' => 'required',
-                'profile_img' => 'required',
+                // 'driving_license' => 'required',
+                // 'profile_img' => 'required',
                 'car_number' => 'required',
             ]
         );
@@ -40,12 +40,16 @@ class AuthController extends Controller
         $deliveryBoy->name = $request->get('name');
         $deliveryBoy->car_number = $request->get('car_number');
         // $deliveryBoy->shop_id = $request->get('shop_id');
+
         $deliveryBoy->mobile = $request->get('mobile');
         $deliveryBoy->password = Hash::make($request->get('password'));
         $deliveryBoy->category_id = $request->get('category_id');
+
         $path = $request->file('driving_license')->store('driving_license_avatars', 'public');
-        $avatar_url= $request->file('profile_img')->store('driver_avatars', 'public');
         $deliveryBoy->driving_license = $path;
+        $avatar_url= $request->file('profile_img')->store('driver_avatars', 'public');
+        $deliveryBoy->avatar_url = $avatar_url;
+
         if (isset($request->fcm_token)) {
             $deliveryBoy->fcm_token = $request->fcm_token;
         }
@@ -61,14 +65,15 @@ class AuthController extends Controller
              $deliveryBoy->shop_id = $request->get('shop_id');
         }
 
-        $deliveryBoy->avatar_url = $avatar_url;
         $deliveryBoy->mobile_verified = 1;
         $deliveryBoy->is_offline = 1;
+
         $deliveryBoy->save();
         $accessToken = $deliveryBoy->createToken('authToken')->accessToken;
 
+        // return $deliveryBoy;
         $deliveryBoy_new = DeliveryBoy::where('id',$deliveryBoy->id)->first();
-         $shop_type = $deliveryBoy_new->category->title;
+        $shop_type = $deliveryBoy_new->category->title;
         if(!$shop_type){
             $shop_type = '';
         }
@@ -79,7 +84,7 @@ class AuthController extends Controller
     {
 
         //sleep(3);
-    
+
         $data = $request->validate([
             'email' => 'required',
             'password' => 'required'
@@ -87,7 +92,7 @@ class AuthController extends Controller
 
 
         if (!DeliveryBoy::where('mobile', '=', $request->email)->exists()) {
-            return response(['errors' => ['This email is not found']], 402);
+            return response(['errors' => ['This mobile is not found']], 402);
         }
 
         $deliveryBoy = DeliveryBoy::where('mobile', $request->email)->first();
@@ -117,15 +122,21 @@ class AuthController extends Controller
             'is_offline' => 'required'
         ]);
         $deliveryBoy = DeliveryBoy::find(auth()->user()->id);
-        if ($request->is_offline) {
-            if ($deliveryBoy->is_free) {
-                $deliveryBoy->is_offline = $request->is_offline;
-            } else {
-                return response(['errors' => ['Please delivered current order then you can goes to offline']], 402);
-            }
-        } else {
+        $contDelivery = $deliveryBoy->orders->where('status',4)->count();
+        if($contDelivery > 0){
+            return response(['errors' => ['Please delivered current order then you can goes to offline']], 402);
+        }else{
             $deliveryBoy->is_offline = $request->is_offline;
         }
+        // if ($request->is_offline) {
+        //     if ($deliveryBoy->is_free) {
+        //         $deliveryBoy->is_offline = $request->is_offline;
+        //     } else {
+        //         return response(['errors' => ['Please delivered current order then you can goes to offline']], 402);
+        //     }
+        // } else {
+        //     $deliveryBoy->is_offline = $request->is_offline;
+        // }
 
         if ($deliveryBoy->save()) {
             return response(['message' => ['Your status has been changed'], 'delivery_boy' => $deliveryBoy], 200);

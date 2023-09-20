@@ -70,18 +70,22 @@
                                                 class="text-muted"> {{ date('h:i A', $time) }} </small>
                                              </td>
                                         @else
-                                        <td> {{\Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('M d Y')}}
+                                        <td> {{-- {{\Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('M d Y')}} --}}
+                                            {{\Carbon\Carbon::parse($order['created_at'])->format('M d Y')}}
                                             <small
-                                                class="text-muted">{{ \Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('h:i A')}}</small>
-                                        </td>
+                                                class="text-muted">{{ \Carbon\Carbon::parse($order['created_at'])->format('h:i A')}}</small>
+{{--                                            class="text-muted">{{ \Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('h:i A')}}</small>
+ --}}                                        </td>
                                         @endif
                                         <td>{{\App\Models\Order::getTextFromOrderType($order['order_type'])}}</td>
                                         <td>{{\App\Models\Order::getTextFromPaymentType($order['orderPayment']['payment_type'])}}</td>
                                         <td>$ {{round($order['total'], 2)}}</td>
                                         <td>
                                             @if(\App\Models\Order::isCancelStatus($order['status']))
-                                                <span
-                                                    class="text-danger">{{ \App\Models\Order::getTextFromStatus($order['status'],$order['order_type'])}}</span>
+                                                {{-- <span
+                                                    class="text-danger">{{ \App\Models\Order::getTextFromStatus($order['status'],$order['order_type'])}}</span> --}}
+                                                <a  class="text-danger" href="{{route('manager.orders.edit',['id'=>$order['id']])}}"> {{ \App\Models\Order::getTextFromStatus($order['status'],$order['order_type'])}}</a>
+
                                             @elseif(\App\Models\Order::isPaymentConfirm($order['status']))
                                                 <a href="{{route('manager.orders.edit',['id'=>$order['id']])}}"> {{\App\Models\Order::getTextFromStatus($order['status'],$order['order_type'])}}</a>
                                             @else
