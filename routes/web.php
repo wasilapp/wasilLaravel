@@ -354,7 +354,7 @@ Route::group(['middleware'=>'locale', 'prefix' => $locale],function (){
           Route::get('/status/{id}/orders' , function($id){
             $orders =  Order::with('shop', 'orderPayment')->where('status',$id)->orderBy('updated_at','DESC')->paginate(10);
                 return view('manager.orders.orders')->with([
-                    'orders'=>$orders
+                    'orders'=>$orders 
                 ]);
 
         })->name('manager.status');

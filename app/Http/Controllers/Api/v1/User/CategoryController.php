@@ -63,7 +63,7 @@ class CategoryController extends Controller
 
     public function getShops($id): array
     {
-
+     
         $shops = Shop::has('manager')->where('category_id',$id)->get();
         $filtershop = [];
 
@@ -72,7 +72,6 @@ class CategoryController extends Controller
            array_push($filtershop,$shop);
 
        }
-
 
 
         return $filtershop;

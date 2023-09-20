@@ -14,10 +14,14 @@ class CurrencyUtil {
         return AppSetting::$currencySign.($afterSpace?" ":"");
     }
 
+
+
     public static function getDiscountedPrice($price,$discount,$formatted=false){
         if($formatted)
             return self::doubleToString($price * (100-$discount)/100);
         return $price * (100-$discount)/100;
     }
+
+
 }
 

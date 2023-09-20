@@ -216,7 +216,6 @@
                                             </button>
                                         </a>
                                         @if($order['status'] == 1 )
-                                        {{ dd($order) }}
                                             @if( \Carbon\Carbon::now()->diffInHours($order['orderDatetime'], false) >= 0)
 
                                                 <form action="{{route('manager.orders.update',['id'=>$order['id']])}}"
@@ -290,7 +289,7 @@
                                                     class="btn w-sm btn-light waves-effect">{{__('manager.go_to_orders')}}
                                             </button>
                                         </a>
-                                        @if($order['status']==1)
+                                        @if($order['status']==1 || $order['status']==-2 )
                                             @if(\Carbon\Carbon::now()->diffInHours($order['orderDatetime'], false) >= 0)
                                                 <form action="{{route('manager.orders.update',['id'=>$order['id']])}}"
                                                     method="post" class="d-inline">
@@ -315,7 +314,7 @@
                                                         class="btn w-sm btn-danger waves-effect waves-light ml-2">{{__('manager.cancel')}}
                                                 </button>
                                             </form>
-                                        @elseif($order['status']==2)
+                                        @elseif($order['status']==2 )
                                             <form
                                                 action="{{route('manager.delivery-boys.showForAssign',['order_id'=>$order['id']])}}"
                                                 method="GET" class="d-inline">

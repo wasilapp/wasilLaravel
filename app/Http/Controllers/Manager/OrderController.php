@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers\Manager;
 
-use Carbon\Carbon;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Models\Manager;
-use App\Models\Product;
-use App\Models\ProductItem;
-use Illuminate\Http\Request; 
+use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FCMController;
-use App\Http\Controllers\Admin\TransactionController;
+use App\Models\Cart;
+use App\Models\Manager;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductItem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class OrderController extends Controller
 {
     public function index()
     {
 
-        
         $shop = Manager::find(auth()->user()->id)->shop;
 
         if ($shop) {
@@ -62,26 +61,22 @@ class OrderController extends Controller
     public function edit($id)
     {
 
-        $shop = Manager::find(auth()->user()->id)->shop;
+      $shop = Manager::find(auth()->user()->id)->shop;
         if ($shop) {
             $order =  Order::with('carts','carts.product','orderTime','carts.product.productImages','address','user','deliveryBoy','orderPayment','carts.productItem','carts.productItem.productItemFeatures')
                 ->where('shop_id','=',$shop->id)
                 ->where('id','=',$id)->first();
+            //   dd($order->orderTime);
+            if(isset($order->orderTime)){
+                $order['order_time'] =Carbon::parse($order->orderTime->order_time)->format('H:i:s');
+                $order['offer_date'] =Carbon::parse($order->orderTime->order_date)->format('Y-m-d');
+            }
 
-            //$date = $order;
-          //  dd($order->orderTime->order_date);
-            $order['order_time'] =Carbon::parse($order->orderTime->order_time)->format('H:i:s');
-            $order['offer_date'] =Carbon::parse($order->orderTime->order_date)->format('Y-m-d');
-            
-            $data['datetime'] = $order['offer_date'].' '.$order['order_time']; 
+
+            $data['datetime'] = $order['offer_date'].' '.$order['order_time'];
 
             $current = Carbon::now();
-          //  dd($current);
             $dataTime = Carbon::parse($data['datetime']);
-            //dd($dataTime);
-           // dd($order['orderDatetime']);
-          // $diff = $current->diffInHours($dataTime, false);
-           // dd('dif', $diff);
             if($order){
                 $order = $order->toArray();
                 $order['orderDatetime'] = $dataTime;
@@ -106,8 +101,6 @@ class OrderController extends Controller
             'redirect_url'=> route('manager.shops.index')
         ]);
 
-
-
     }
 
 
@@ -118,16 +111,22 @@ class OrderController extends Controller
         $this->validate($request, [
             'status' => 'required'
         ]);
- 
-        $shop = Manager::findorfail(auth()->user()->id)->shop;
+
+        $shop = Manager::find(auth()->user()->id)->shop;
         if ($shop) {
             $order = Order::with('carts', 'carts.product', 'carts.product.productImages', 'user','carts.productItem')
                 ->where('shop_id', '=', $shop->id)
                 ->where('id', '=', $id)->first();
+
+
+
             if ($order) {
+
+
                 if (Order::isCancelStatus($request->status)) {
                     if (Order::isCancellable($order->status)) {
                         $order->status = $request->status;
+
                         $fcm_token = $order->user->fcm_token;
                         FCMController::sendMessage("Changed Order Status", "Your order cancelled by seller", $fcm_token);
 
@@ -142,11 +141,12 @@ class OrderController extends Controller
                             ]);
                         }
 
-                    } else {
-                        return redirect()->back()->with([
-                            'error' => 'you can\'t cancel this order'
-                        ]);
                     }
+                    //   else {
+                    //     return redirect()->back()->with([
+                    //         'error' => 'you can\'t cancel this order'
+                    //     ]);
+                    // }
                 }
 
 
@@ -178,8 +178,17 @@ class OrderController extends Controller
                     }
                 }
 
+                if($order->status = -2){
+                    // dd($order->status);
+                    $order->status = 2;
+                    // dd($order->status);
+                    //  dd($request->delivery_boy_id);
+                    $order->delivery_boy_id = null;
 
-                $order->status = $request->get('status');
+                }else{
+                    $order->status = $request->get('status');
+                }
+
 
                 $fcm_token = $order->user->fcm_token;
                 if ($request->get('status') == 2) {

@@ -5,7 +5,6 @@
     @include('manager.layouts.shared/title-meta', ['title' => $title])
     @include('manager.layouts.shared/head-css')
     {{--@include('layouts.shared/head-css', ["demo" => "dark"])--}}
-    
 </head>
 
 <body @yield('body-extra')>

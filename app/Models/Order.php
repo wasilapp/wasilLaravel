@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\AssignToDelivery;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property mixed id
@@ -106,10 +105,6 @@ class Order extends Model
     {
         return $this->hasOne(DeliveryBoyReview::class);
     }
-    public function assignToDelivery()
-    {
-        return $this->hasOne(AssignToDelivery::class);
-    }
 
     public function orderPayment(): BelongsTo
     {
@@ -121,7 +116,7 @@ class Order extends Model
         if ($orderType == self::$ORDER_TYPE_PICKUP) {
             switch ($status) {
                 case self::$ORDER_CANCELLED_BY_SHOP :
-                    return __('manager.order_cancelled_by_shop');
+                    return __('manager.order_cancelled_by_delivery');
                 case self::$ORDER_CANCELLED_BY_USER:
                     return __('manager.order_cancelled_by_user');
                 case self::$ORDER_WAIT_FOR_PAYMENT:
@@ -142,7 +137,7 @@ class Order extends Model
             switch ($status) {
 
                 case self::$ORDER_CANCELLED_BY_SHOP :
-                    return __('manager.order_cancelled_by_shop');
+                    return __('manager.order_cancelled_by_delivery');
                 case self::$ORDER_CANCELLED_BY_USER:
                     return __('manager.order_cancelled_by_user');
                 case self::$ORDER_WAIT_FOR_PAYMENT:

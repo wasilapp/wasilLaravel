@@ -56,7 +56,7 @@ class OrderController extends Controller
             'total' => 'required',
             'status' => 'required',
             'order_type'=>'required',
-            // 'shop_id'=>'required',
+           // 'shop_id'=>'required',
             'count' =>'required',
             'type' => 'required'
         ]);
@@ -65,6 +65,7 @@ class OrderController extends Controller
                 'order_time'=> 'required',
                 ]);
         }
+
 
         if($request->order_type==2){
             $this->validate($request,[
@@ -107,7 +108,9 @@ class OrderController extends Controller
             if (isset($request->coupon_discount)) {
                 $order->coupon_discount = $request->coupon_discount;
             }
+            //dd($request->shop_id);
             $shop = Shop::where('id',$request->shop_id)->first();
+            //dd($shop);
             if(!$shop){
                 return response(['errors' => ['This shop dose not exist']], 404);
             }
@@ -158,7 +161,6 @@ class OrderController extends Controller
                  FCMController::sendMessage("New Order","You have new order from ".auth()->user()->name, $shopManager->fcm_token);
              return Order::with('carts', 'coupon', 'address','deliveryBoy', 'orderPayment' ,'shop')->find($order->id);
 
-
         } else {
 
             return response(['errors' => ['There is something wrong']], 403);
@@ -166,10 +168,7 @@ class OrderController extends Controller
                 DB::rollBack();
                 Log::info($e->getMessage());
                 return response(['errors' => ['There is something wrong']], 403);
-
-
-}
-
+        }
 
     }
 

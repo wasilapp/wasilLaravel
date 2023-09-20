@@ -16,7 +16,6 @@ return [
     'remaining_amount' =>'المتبقى',
     'commesion' => 'العمولة',
     'okay' => 'موافق',
-    'Wait-date-order'=>'انتظر حتى يتوافق التاريخ والوقت مع تاريخ ووقت الطلب الحالي',
     'be_up_to_date'=>'كن على اطلاع بأحدث الأشياء',
     'new_order_arrive'=>'وصول طلب جديد',
     'create_user_wallet' => 'أضف عرض',
@@ -27,7 +26,7 @@ return [
     "max_usage" => 'أقصى استخدام',
     "user_wallet" => 'محفظة المستخدم',
     "dashboard" => "لوحة القيادة",
-
+    
     "sales_analytics" => "إحصائيات البيع",
     "current_week" => "الأسبوع الحلي",
     "total_revenue" => 'مجموع الإيرادات',
@@ -180,7 +179,7 @@ return [
     "content" => "المحتوى",
     "add_content" => "إضافة محتوى",
     "add_feature" => "إضافة ميزة",
-
+  
     "items" => "المنتجات",
     "item" => "المنتج",
     "add_item" => "إضافة منتج",

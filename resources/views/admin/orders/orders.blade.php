@@ -76,9 +76,13 @@
 
                                         <td><span class=" text-body font-weight-bold">#{{$order['id']}}</span></td>
 
-                                        <td> {{\Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('M d Y')}}
+                                      <!--   <td> {{\Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('M d Y')}}
                                             <small
                                                 class="text-muted">{{ \Carbon\Carbon::parse($order['created_at'])->setTimezone(\App\Helpers\AppSetting::$timezone)->format('h:i A')}}</small>
+                                        </td>-->
+                                         <td> {{\Carbon\Carbon::parse($order['created_at'])->format('M d Y')}}
+                                            <small
+                                                class="text-muted">{{ \Carbon\Carbon::parse($order['created_at'])->format('h:i A')}}</small>
                                         </td>
                                         <td>{{\App\Models\Order::getTextFromOrderType($order['order_type'])}}</td>
                                         <td> {{$order['shop'] ? $order['shop']['name']: ''}} </td>

@@ -36,6 +36,7 @@ class Category extends Model
         return $this->hasMany(Shop::class)->has('manager');
     }
 
+
     public static function activateCategory($id): bool
     {
         $sub_categories =  SubCategory::where('category_id',$id)->get();

@@ -16,7 +16,6 @@ return [
     'remaining_amount' =>'Remaining Amount',
     'commesion' => 'Commission',
     'okay' => 'Okay',
-    'Wait-date-order' => 'Wait until the date and time match the current order date and time.',
     'be_up_to_date'=>'Be Up To Date',
     'new_order_arrive'=>'New Order Arrive',
     'create_user_wallet' => 'Add Coupon',

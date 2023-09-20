@@ -20,13 +20,12 @@ class OrderController extends Controller
     public function index()
     {
         $deliveryBoyId = auth()->user()->id;
-        
+
         $lastOrders =  Order::with('carts', 'shop','user','userAddress','deliveryBoyReview','orderPayment','orderTime')->where('delivery_boy_id', $deliveryBoyId)->where('status' ,5)->orderBy('updated_at', 'DESC')->get();
         $currentOrders = Order::with('carts', 'shop','user','userAddress','deliveryBoyReview','orderPayment','orderTime')
         ->where('delivery_boy_id', $deliveryBoyId)->whereIn('status' ,[3,4])->orderBy('updated_at', 'DESC')->get();
-        
         $orders_ids = auth()->user()->ordersAssignToDelivery()->pluck('order_id');
-        //return $orders_ids;
+
         $waitingOrders = Order::with('carts', 'shop','deliveryBoyReview','orderPayment','orderTime')->whereIn('id', $orders_ids)->where('status',1)
             ->orderBy('updated_at', 'DESC')->get();
 
@@ -84,7 +83,7 @@ class OrderController extends Controller
                 DB::commit();
                 return response(['message' => ['Your request has been successfully deliver']], 200);
         }
-        catch(\Exception $e){
+        catch(Exception $e){
             Log::info($e->getMessage());
             DB::rollBack();
             return response(['errors' => ['Something wrong']], 422);
@@ -98,7 +97,6 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        
         return Order::with('coupon', 'address','orderPayment','user','userAddress', 'shop')->find($id);
     }
 
